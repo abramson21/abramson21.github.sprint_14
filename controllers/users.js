@@ -1,5 +1,5 @@
-const User = require('../models/user');
 const bcrypt = require('bcryptjs');
+const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 
 module.exports.getAllUsers = (req, res) => {
@@ -14,12 +14,18 @@ module.exports.getAllUsers = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar, email } = req.body;
-  bcrypt.hash(req.body.password, 10)
-    .then((hash) => User.create({ name, about, avatar, email, password: hash }))
-    .then(({ name, about, avatar, email }) => res.send({name, about, avatar, email }))
-    .catch(() => res.status(404).send({ message: 'Неверные данные!' }));
-};
+  const {name, about, avatar, email, password} = req.body;
+  if (password.length > 9) {
+    bcrypt.hash(password, 10)
+    .then(hash => User.create({name, about, avatar, email, password: hash}))
+      .then(user => res.send({ data: user }))
+      .catch(() => res.status(500).send({ message: 'Не удалось создать пользователя' }));
+  }
+  else {
+    res.status(500).send({ message: 'Слишком короткий пароль!' });
+  }
+}
+
 
 module.exports.getUser = (req, res) => {
   User.findById(req.params.userId)
@@ -34,14 +40,16 @@ module.exports.getUser = (req, res) => {
 };
 
 module.exports.login = (req, res) => {
-  const { email, password } = req.body;
-  return User.findUserByCredentials(email, password)
-    .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' });
-      res.cookie('token', token);
-      res.status(200).send({ token });
-    })
-    .catch((err) => {
-      res.status(401).send({ message: err.message });
-    });
+    const { email, password } = req.body;
+    return User.findUserByCredentials(email, password)
+        .then((user) => {
+            const token = jwt.sign({ _id: user._id }, 'some-secret-key', {expiresIn: '7d'});
+            console.log(token);
+            res.cookie('token', token);
+            res.status(200).send({ token });
+        })
+        .catch((err) => {
+
+            res.status(401).send({ message: err.message });
+        });
 };
