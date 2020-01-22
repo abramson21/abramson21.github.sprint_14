@@ -8,7 +8,7 @@ function errorStatus(res) {
 
 module.exports = (req, res, next) => {
   console.log(req.cookie.jwt);
-  /*const cookie = req.cookie.jwt;
+  const cookie = req.cookie.jwt;
   const JWT_SECRET = 'dzFhMTFxMTlkcWhiMUBtYWlsLnJ1OnF3ZXF3ZXF3ZXF3ZXF3ZSI';
   if (!cookie) {
     errorStatus(res);
@@ -22,5 +22,5 @@ module.exports = (req, res, next) => {
   } catch (err) {
     errorStatus(res);
   }
-  next();*/
+  next();
 };
