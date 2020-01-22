@@ -29,4 +29,20 @@ module.exports.deleteCard = (req, res) => {
     return res.send({ data: card })
   })
   .catch((error) => res.status(500).send({ message: error.message }));
-}
+};
+
+module.exports.deleteCard = (req, res) => {
+  const { cardId } = req.params;
+  const ownerId = req.user._id;
+  Card.findById(cardId)
+    .then((card) => {
+      if (card.owner.toString() === ownerId) {
+        Card.findByIdAndRemove(cardId)
+          .then((card) => res.send({ data: card }))
+          .catch(() => errorSend(res));
+      } else {
+        return res.status(401).send({ message: 'Вы не имеете доступ к удалению чужих карточек' });
+      }
+    })
+    .catch(() => res.status(404).send({ message: 'Не найден объект с таким идентификатором' }));
+};
