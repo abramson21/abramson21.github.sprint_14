@@ -4,30 +4,30 @@ const validate = /^(https|http)?:\/\/(www.)?[^-_.\s](\d{1,3}.\d{1,3}.\d{1,3}.\d{
 
 const cardSchema = new mongoose.Schema({
   name: {
-      type: String,
-      minlength: 2,
-      maxlength: 30,
-      required: true,
+    type: String,
+    minlength: 2,
+    maxlength: 30,
+    required: true,
   },
   link: {
     type: String,
     match: validate,
-    required: true
+    required: true,
   },
-  owner : {
+  owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
-    required: true
+    required: true,
   },
-  likes : [{
+  likes: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
-    default: []
+    default: [],
   }],
-  createdAt : {
+  createdAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 module.exports = mongoose.model('card', cardSchema);

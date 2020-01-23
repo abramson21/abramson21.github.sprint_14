@@ -1,8 +1,9 @@
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const express = require('express');
-const app = express()
-app.use(cookieParser())
+
+const app = express();
+app.use(cookieParser());
 
 function errorStatus(res) {
   return res

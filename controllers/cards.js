@@ -1,34 +1,37 @@
 const Card = require('../models/card');
 
+function errorSend(res) {
+  res.status(500).send({ message: 'Произошла ошибка' });
+}
+
 module.exports.getAllCards = (req, res) => {
   Card.find({})
     .then((card) => {
-      if (card.length === 0){
-        return res.status(404).send({ message: 'База данных cards пуста! '})
+      if (card.length === 0) {
+        return res.status(404).send({ message: 'База данных cards пуста! ' });
       }
-      return res.send({ data: card })
+      return res.send({ data: card });
     })
     .catch((error) => res.status(500).send({ message: error.message }));
-  }
+};
 
 module.exports.createCard = (req, res) => {
   const owner = req.user._id;
-  const {name, link} = req.body;
-  Card.create({name, link, owner})
-    .then(card => res.send({ data: card }))
+  const { name, link } = req.body;
+  Card.create({ name, link, owner })
+    .then((card) => res.send({ data: card }))
     .catch(() => res.status(500).send({ message: 'Не удается создать карточку' }));
 };
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-  .then((card) => {
-    console.log(card);
-    if (card === null){
-      return res.status(404).send({ message: 'Данной карточки нет!'})
-    }
-    return res.send({ data: card })
-  })
-  .catch((error) => res.status(500).send({ message: error.message }));
+    .then((card) => {
+      if (card === null) {
+        return res.status(404).send({ message: 'Данной карточки нет!' });
+      }
+      return res.send({ data: card });
+    })
+    .catch((error) => res.status(500).send({ message: error.message }));
 };
 
 module.exports.deleteCard = (req, res) => {
@@ -38,11 +41,9 @@ module.exports.deleteCard = (req, res) => {
     .then((card) => {
       if (card.owner.toString() === ownerId) {
         Card.findByIdAndRemove(cardId)
-          .then((card) => res.send({ data: card }))
+          .then((cardI) => res.send({ data: cardI }))
           .catch(() => errorSend(res));
-      } else {
-        return res.status(401).send({ message: 'Вы не имеете доступ к удалению чужих карточек' });
-      }
+      } return res.status(401).send({ message: 'Вы не имеете доступ к удалению чужих карточек' });
     })
     .catch(() => res.status(404).send({ message: 'Не найден объект с таким идентификатором' }));
 };

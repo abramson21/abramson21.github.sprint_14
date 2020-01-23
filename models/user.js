@@ -7,21 +7,21 @@ const validate = /^(https|http)?:\/\/(www.)?[^-_.\s](\d{1,3}.\d{1,3}.\d{1,3}.\d{
 
 const userSchema = new mongoose.Schema({
   name: {
-      type: String,
-      minlength: 2,
-      maxlength: 30,
-      required: true,
+    type: String,
+    minlength: 2,
+    maxlength: 30,
+    required: true,
   },
   about: {
     type: String,
     minlength: 2,
     maxlength: 30,
-    required: true
+    required: true,
   },
   avatar: {
     type: String,
     match: validate,
-    required: true
+    required: true,
   },
   email: {
     type: String,
@@ -33,11 +33,11 @@ const userSchema = new mongoose.Schema({
     },
   },
   password: {
-      type: String,
-      required: true,
-      minlength: 10,
-      select: false
-  }
+    type: String,
+    required: true,
+    minlength: 10,
+    select: false,
+  },
 });
 
 userSchema.statics.findUserByCredentials = function check(email, password) {
