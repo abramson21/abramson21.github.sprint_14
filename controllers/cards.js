@@ -24,17 +24,6 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
-    .then((card) => {
-      if (card === null) {
-        return res.status(404).send({ message: 'Данной карточки нет!' });
-      }
-      return res.send({ data: card });
-    })
-    .catch((error) => res.status(500).send({ message: error.message }));
-};
-
-module.exports.deleteCard = (req, res) => {
   const { cardId } = req.params;
   const ownerId = req.user._id;
   Card.findById(cardId)
