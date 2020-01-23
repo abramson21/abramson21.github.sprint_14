@@ -1,4 +1,8 @@
-const jwt = require("jsonwebtoken");
+const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
+const express = require('express');
+const app = express()
+app.use(cookieParser())
 
 function errorStatus(res) {
   return res
@@ -7,9 +11,8 @@ function errorStatus(res) {
 }
 
 module.exports = (req, res, next) => {
-  console.log(req.cookie.jwt);
-  const cookie = req.cookie.jwt;
-  const JWT_SECRET = 'dzFhMTFxMTlkcWhiMUBtYWlsLnJ1OnF3ZXF3ZXF3ZXF3ZXF3ZSI';
+  const cookie = req.cookies.jwt;
+  const JWT_SECRET = 'b24076852c7c534c77ce7b233022026ffc663393b557432496f2a70fa3756b33';
   if (!cookie) {
     errorStatus(res);
   }
@@ -22,5 +25,6 @@ module.exports = (req, res, next) => {
   } catch (err) {
     errorStatus(res);
   }
+
   next();
 };

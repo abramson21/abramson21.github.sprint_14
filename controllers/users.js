@@ -3,8 +3,6 @@ const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
 
-
-
 module.exports.getAllUsers = (req, res) => {
   User.find({})
   .then((user) => {
@@ -18,7 +16,9 @@ module.exports.getAllUsers = (req, res) => {
 
 module.exports.createUser = (req, res) => {
   const {name, about, avatar, email, password} = req.body;
-  if (password.length > 9) {
+  console.log(password);
+
+  if (password.length > 11) {
     bcrypt.hash(password, 10)
     .then(hash => User.create({name, about, avatar, email, password: hash}))
       .then(user => res.send({ data: user }))
@@ -28,7 +28,6 @@ module.exports.createUser = (req, res) => {
     res.status(500).send({ message: 'Слишком короткий пароль!' });
   }
 }
-
 
 module.exports.getUser = (req, res) => {
   User.findById(req.params.userId)
@@ -43,16 +42,21 @@ module.exports.getUser = (req, res) => {
 };
 
 module.exports.login = (req, res) => {
-    const { email, password } = req.body;
-    return User.findUserByCredentials(email, password)
-        .then((user) => {
-          const JWT_SECRET = 'dzFhMTFxMTlkcWhiMUBtYWlsLnJ1OnF3ZXF3ZXF3ZXF3ZXF3ZSI';
-          const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
-            console.log(token);
-            res.cookie('token', token);
-            res.status(200).send({ token });
+  const { email, password } = req.body;
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const JWT_SECRET = 'b24076852c7c534c77ce7b233022026ffc663393b557432496f2a70fa3756b33';
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
+      res
+        .cookie('jwt', token, {
+          maxAge: 3600000,
+          httpOnly: true,
+          sameSite: true,
         })
-        .catch((err) => {
-            res.status(401).send({ message: err.message });
-        });
+        .send(token)
+        .end();
+    })
+    .catch((err) => {
+      res.status(401).send({ message: err.message });
+  });
 };
